@@ -27,8 +27,12 @@
         <arg name="sonars_installed" value="$(arg sonars_installed)" />
         <arg name="lidar_extrinsics_file" value="$(arg lidar_extrinsics_file)" />
     </include>
+    
+    <arg name="x_pos" default="6.5"/>
+    <arg name="y_pos" default="0.5"/>
+    <arg name="z_pos" default="0.0"/>
 
-    <node name="magni_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model magni" />
+    <node name="magni_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description -model magni" />
 
     
    <!-- Load the parameters used by the following nodes -->

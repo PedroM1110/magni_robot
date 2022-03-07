@@ -1,0 +1,40 @@
+<launch>
+  <arg name="camera_position" default="forward"/> 
+  <arg name="lidar_position" default="top_plate"/>   
+  <arg name="sonars_installed" default="true"/>
+  <arg name="rviz_config" default="true" />
+
+  <!-- load empty world -->
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false" />
+  <arg name="debug" default="false" />
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+
+  <!-- Arguments -->
+  <arg name="map_file" default="/home/pedro/Cedri_Hall_1.yaml"/>
+  <arg name="open_rviz" default="true"/>
+  <arg name="move_forward_only" default="false"/>
+  
+  <!-- start robot -->
+  <include file="$(find magni_gazebo)/launch/magni.launch">
+    <arg name="camera_position" value="$(arg camera_position)"/>
+    <arg name="sonars_installed" value="$(arg sonars_installed)"/>
+    <arg name="lidar_position" value="$(arg lidar_position)"/>
+  </include>
+
+  <!-- Map server -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+  <!-- AMCL -->
+  <include file="$(find magni_nav)/launch/amcl.launch"/>
+
+  <!-- move_base -->
+  <include file="catkin_ws/src/magni_robot/magni_nav/launch/move_base.launch">
+    
+  </include>
+
+  <!-- rviz -->
+  <node pkg="rviz" type="rviz" name="$(anon rviz)"
+        args="-d $(find magni_viz)/rviz/rviz_DD.rviz"/>
+</launch>

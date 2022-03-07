@@ -1,39 +1,38 @@
 <launch>
 
-    <!-- 
-    This string will be taken to search for camera extrinsics yaml file like 
-    $(find magni_description)/extrinsics/camera_extrinsics_$(arg camera_position).yaml
-    so if that yaml file does not exsist, the xacro file will return "No such file or directory" error
-    -->
     <arg name="camera_position" default="forward"/> 
     
-    <!-- 
-    This string will be taken to search for lidar extrinsics yaml file like 
-    $(find magni_description)/extrinsics/lidar_extrinsics_$(arg lidar_position).yaml
-    so if that yaml file does not exsist, the xacro file will return "No such file or directory" error
-    -->
     <arg name="lidar_position" default="top_plate"/>
     
     <arg name="sonars_installed" default="true"/>
 
     <arg name="rviz_config" default="true" />
-
+    
+    <!-- Testing two lines below-->
+    <arg name="lidar_translation" default="-0.03 0 0.20 0 3.14 3.14"/><!-- base_link to lidar laser -->
+    
+    <node pkg="tf" type="static_transform_publisher" name="stp_base_link_laser" args="$(arg lidar_translation) /base_link /laser 20"/>
+    <!-- End testing-->
+    
     <!-- load empty world -->
     <arg name="gui" default="true"/>
     <arg name="headless" default="false" />
     <arg name="debug" default="false" />
     <arg name="paused" default="false"/>
     <arg name="use_sim_time" default="true"/>
+    <arg name="x_pos" default="6.5"/>
+    <arg name="y_pos" default="0.5"/>
+    <arg name="z_pos" default="0.0"/>
 
+    
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="gui" value="$(arg gui)" />
-        <arg name="headless" value="$(arg headless)" />
-        <arg name="paused" value="$(arg paused)" />
-        <arg name="debug" value="$(arg debug)" />
-        <arg name="use_sim_time" value="true" />
+        <arg name="world_name" value="$(find magni_gazebo)/worlds/CedriHall.world"/>
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
     </include>
-
-
 
     <!-- start robot -->
     <include file="$(find magni_gazebo)/launch/magni.launch">
@@ -43,25 +42,17 @@
     </include>
 
 
-
+    <include file="catkin_ws/src/magni_robot/magni_nav/launch/move_base.launch">
+  
+    </include>
 
     <!-- Additional nodes (optional)  -->
 
 
-    <!-- RViz to visualize robot state -->
     <arg unless="$(arg rviz_config)" name="rviz_args" value="" />
     <arg     if="$(arg rviz_config)" name="rviz_args" value="-d $(find magni_gazebo)/launch/rviz_config.rviz" />
 
     <node name="$(anon rviz)" pkg="rviz" type="rviz" respawn="false" args="$(arg rviz_args)" output="screen"/>
 
-
-    <!-- GUI for robot control via 'cmd_vel' topic -->
-    <node pkg="rqt_robot_steering" type="rqt_robot_steering" name="magni_rqt_teleop">
-        <param name="default_topic" type="str" value="/ubiquity_velocity_controller/cmd_vel"/>
-        <param name="default_vx_max" type="double" value="0.8" />
-        <param name="default_vx_min" type="double" value="-0.8" />
-        <param name="default_vw_max" type="double" value="1.5" />
-        <param name="default_vw_min" type="double" value="-1.5" />
-    </node>
 
 </launch>
