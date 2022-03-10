@@ -1,7 +1,7 @@
 <launch>
   <arg name="camera_position" default="forward"/> 
   <arg name="lidar_position" default="top_plate"/>   
-  <arg name="sonars_installed" default="true"/>
+  <arg name="sonars_installed" default="false"/>
   <arg name="rviz_config" default="true" />
 
   <!-- load empty world -->
